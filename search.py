@@ -103,7 +103,7 @@ class Crawller():
 
 
   # 一件のみ取得
-  def get_report(self, query, target_reports=["明細書", "請求の範囲", "要約書", "特許検索報告書", "拒絶理由通知書"]): # 明細書, 請求の範囲, 要約書, 特許検索報告書, 拒絶理由通知書
+  def get_report(self, query, target_reports=["明細書", "請求の範囲", "要約書", "検索報告書", "拒絶理由通知書"]): # 明細書, 請求の範囲, 要約書, 特許検索報告書, 拒絶理由通知書
     outputs  = [] 
     results = self.get_search_candidates(query)
     print ("query:", query, "hits:", len(results))
@@ -146,5 +146,5 @@ if __name__ == "__main__":
     pprint(crawller.get_report("特願2020-086759"))
 
     crawller        = Crawller(8,  headless=True)
-    pprint(crawller.get_report("特願2020-086759", target_reports=["特許検索報告書"]))
+    pprint(crawller.get_report("特願2020-086759", target_reports=["検索報告書"]))
     
