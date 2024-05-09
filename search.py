@@ -112,7 +112,7 @@ if __name__ == "__main__":
     pprint(crawller.get_reports("農業 人工知能 センサー"))
 
     crawller        = Crawller(6,  headless=True)
-    pprint(crawller.get_reports("特願2020-086759"), get_num=1)
+    pprint(crawller.get_reports("特願2020-086759", get_num=1))
 
     crawller        = Crawller(8,  headless=True)
     pprint(crawller.get_reports("特願2020-086759", get_num=1, target_reports=["検索報告書"]))
