@@ -69,10 +69,13 @@ class Crawller():
 
 
   # 経過情報の一括取得
-  def get_reports(self, query, target_reports=["明細書", "請求の範囲", "要約書", "特許検索報告書", "拒絶理由通知書"]): # 明細書, 請求の範囲, 要約書, 特許検索報告書, 拒絶理由通知書
+  def get_reports(self, query, target_reports=["明細書", "請求の範囲", "要約書", "特許検索報告書", "拒絶理由通知書"], get_num = None): # 明細書, 請求の範囲, 要約書, 特許検索報告書, 拒絶理由通知書
     outputs  = [] 
     results = self.get_search_candidates(query)
     print ("query:", query, "hits:", len(results))
+    if type(get_num) == int: 
+      result = results[:get_num+1]
+
     if results:
       for result in results:
         print ("---")
@@ -91,47 +94,13 @@ class Crawller():
               self.driver.switch_to.window(self.report_window_)
               html_content = self.driver.page_source
               soup = BeautifulSoup(html_content, "html.parser")
-              text = soup.find_all("pre")
-              output["target_report"] = text
+              output[target_report] = soup.text
               self.driver.close()
             else: 
               print ("None")
         outputs.append(output)
         self.driver.switch_to.window(self.progress_window)
         self.driver.close()
-    return outputs
-
-
-  # 一件のみ取得
-  def get_report(self, query, target_reports=["明細書", "請求の範囲", "要約書", "検索報告書", "拒絶理由通知書"]): # 明細書, 請求の範囲, 要約書, 特許検索報告書, 拒絶理由通知書
-    outputs  = [] 
-    results = self.get_search_candidates(query)
-    print ("query:", query, "hits:", len(results))
-    if results:
-      print ("---")
-      print (results[0][0])
-      self.move_progress_information(results[0][1])
-      output      = {"検索クエリ": query, "文献番号": results[0][0]}
-      for target_report in target_reports:
-          print (target_report)
-          self.driver.switch_to.window(self.progress_window)
-          report_link = self.driver.find_elements(By.XPATH, "//a[contains(text(), '%s')]" % target_report)
-          if len(report_link) > 0: 
-            print ("Available")
-            report_link[0].click()
-            time.sleep(self.sleep_time)
-            self.report_window_ = self.driver.window_handles[-1]
-            self.driver.switch_to.window(self.report_window_)
-            html_content = self.driver.page_source
-            soup = BeautifulSoup(html_content, "html.parser")
-            text = soup.find_all("pre")
-            output["target_report"] = text
-            self.driver.close()
-          else: 
-            print ("None")
-      outputs.append(output)
-      self.driver.switch_to.window(self.progress_window)
-      self.driver.close()
     return outputs
 
 if __name__ == "__main__":
@@ -143,8 +112,8 @@ if __name__ == "__main__":
     pprint(crawller.get_reports("農業 人工知能 センサー"))
 
     crawller        = Crawller(6,  headless=True)
-    pprint(crawller.get_report("特願2020-086759"))
+    pprint(crawller.get_reports("特願2020-086759"), get_num=1)
 
     crawller        = Crawller(8,  headless=True)
-    pprint(crawller.get_report("特願2020-086759", target_reports=["検索報告書"]))
+    pprint(crawller.get_reports("特願2020-086759", get_num=1, target_reports=["検索報告書"]))
     
